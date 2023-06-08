@@ -7,10 +7,17 @@ import {
   TouchableOpacity,
   Platform,
   TouchableNativeFeedback,
+  Keyboard,
 } from 'react-native';
 
-function AddTodo() {
+function AddTodo({onInsert}) {
   const [text, setText] = useState('');
+
+  const onPress = () => {
+    onInsert(text);
+    setText('');
+    Keyboard.dismiss();
+  };
 
   console.log(text);
 
@@ -27,12 +34,20 @@ function AddTodo() {
         style={styles.input}
         value={text}
         onChangeText={setText}
+        onSubmitEditing={onPress}
+        returnKeyType="done"
       />
       {Platform.select({
-        ios: <TouchableOpacity activeOpacity={0.5}>{button}</TouchableOpacity>,
+        ios: (
+          <TouchableOpacity activeOpacity={0.5} onPress={onPress}>
+            {button}
+          </TouchableOpacity>
+        ),
         android: (
           <View style={styles.circleWrapper}>
-            <TouchableNativeFeedback>{button}</TouchableNativeFeedback>
+            <TouchableNativeFeedback onPress={onPress}>
+              {button}
+            </TouchableNativeFeedback>
           </View>
         ),
       })}
